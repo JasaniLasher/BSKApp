@@ -41,7 +41,6 @@ public class AzureServiceAdapter {
                             String tenantID = Helper.ResolveTenant(url);
                             Request request = original.newBuilder()
                                     .header("TenantID", tenantID)
-                                    //.header("Connection","close")
                                     .method(original.method(), original.body())
                                     .build();
 
