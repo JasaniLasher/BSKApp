@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView_LocationName"
+        android:layout_width="222dp"
+        android:layout_height="34dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/textView_RegNo"
+        app:layout_constraintTop_toTopOf="@+id/textView_Location" />
+
+    <TextView
+        android:id="@+id/textView_RegNo"
+        android:layout_width="222dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_Reg"
+        app:layout_constraintTop_toBottomOf="@+id/textView_MobileNo" />
+
+    <TextView
+        android:id="@+id/textView_Reg"
+        android:layout_width="105dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Reg No:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Mobile" />
+
+    <TextView
+        android:id="@+id/textView_Location"
+        android:layout_width="105dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Location:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Reg" />
+
+    <EditText
+        android:id="@+id/editText_companyID"
+        android:layout_width="156dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Enter CompanyId"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintStart_toEndOf="@+id/editText_IMEI"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Switch2" />
+
+    <TextView
+        android:id="@+id/textView_MobileNo"
+        android:layout_width="218dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="152dp"
+        android:layout_marginLeft="152dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_BranchName" />
+
+    <TextView
+        android:id="@+id/textView_Mobile"
+        android:layout_width="105dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Mobile :"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Branch" />
+
+    <TextView
+        android:id="@+id/textView_Welcome"
+        android:layout_width="358dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:text="Welcome User!"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="158dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="24dp"
+        android:onClick="trigger"
+        android:text="Trigger"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_Branch"
+        android:layout_width="105dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Branch :"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Welcome" />
+
+    <TextView
+        android:id="@+id/textView_BranchName"
+        android:layout_width="218dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="152dp"
+        android:layout_marginLeft="152dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Welcome" />
+
+    <EditText
+        android:id="@+id/editText_IMEI"
+        android:layout_width="146dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Enter IMEI"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_Switch1" />
+
+
+    <Switch
+
+        android:id="@+id/switchButton_Log"
+
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="84dp"
+        android:layout_marginLeft="84dp"
+        android:layout_marginTop="45dp"
+        android:text="LOGIN    "
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_LocationName" />
+
+    <TextView
+
+        android:id="@+id/textView_Switch1"
+
+        android:layout_width="wrap_content"
+
+        android:layout_height="19dp"
+
+        android:layout_marginStart="84dp"
+        android:layout_marginLeft="84dp"
+        android:layout_marginTop="8dp"
+        android:text="Logged OFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchButton_Log" />
+
+    <TextView
+
+        android:id="@+id/textView_Switch2"
+        android:layout_width="wrap_content"
+
+        android:layout_height="19dp"
+
+        android:text="Trip OFF"
+        app:layout_constraintStart_toStartOf="@+id/switchButton_Trip"
+        app:layout_constraintTop_toTopOf="@+id/textView_Switch1" />
+
+    <Switch
+
+        android:id="@+id/switchButton_Trip"
+
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:text="TRIP    "
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/switchButton_Log"
+        app:layout_constraintTop_toTopOf="@+id/switchButton_Log" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

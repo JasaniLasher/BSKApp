@@ -1,0 +1,2 @@
+include ':mainapp', ':dal'
+rootProject.name='BSKApp'
