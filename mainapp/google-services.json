@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "952439102953",
+    "firebase_url": "https://bsk-driver-app.firebaseio.com",
+    "project_id": "bsk-driver-app",
+    "storage_bucket": "bsk-driver-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952439102953:android:d27e4fe5b508933a953f78",
+        "android_client_info": {
+          "package_name": "bsk.mobile.driverapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952439102953-3h5eck0hi5ksedq64omb539e8lqjj6gl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF_Nvnra44RGOQ1P7uREfN_1tZrbEHFvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952439102953-3h5eck0hi5ksedq64omb539e8lqjj6gl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

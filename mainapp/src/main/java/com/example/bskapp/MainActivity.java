@@ -61,9 +61,12 @@ public class MainActivity extends AppCompatActivity  {
         Switch sw_Log = (Switch) findViewById(R.id.switchButton_Log);
         sw_Log.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                TextView tv_Login = (TextView)findViewById(R.id.textView_Switch1);
                 if (isChecked) {
+                    tv_Login.setText("Logged ON");
                     startService();
                 } else {
+                    tv_Login.setText("Logged OFF");
                     stopService();
                 }
             }
@@ -254,16 +257,15 @@ public class MainActivity extends AppCompatActivity  {
         tv_RegNo.setText(RegNo);
 
         Switch sw_Login = (Switch) findViewById(R.id.switchButton_Log);
-        TextView tv_Login = (TextView)findViewById(R.id.textView_Switch1);
+
 
         if(pShedInShedOutStatus.equalsIgnoreCase("Shed In")) {
-            //sw_Login.setChecked(true);
-            tv_Login.setText("Logged ON");
+            sw_Login.setChecked(true);
 
         }
         else {
-            //sw_Login.setChecked(false);
-            tv_Login.setText("Logged OFF");
+            sw_Login.setChecked(false);
+
         }
 
 /*        Switch sw_Trip = (Switch) findViewById(R.id.switchButton_Trip);
