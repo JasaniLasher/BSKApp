@@ -136,6 +136,7 @@ public class LocationUpdaterService extends Service {
                     return START_NOT_STICKY;
 
                 case ACTION_STOP:
+                    timer.cancel();
                     // Stop foreground service and remove the notification.
                     stopForeground(true);
                     // Stop the foreground service.

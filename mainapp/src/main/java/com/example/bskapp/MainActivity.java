@@ -1,10 +1,5 @@
 package com.example.bskapp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -16,23 +11,32 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.bskapp.com.example.bskapp.dataapi.AzureServiceAdapter;
-import com.example.bskapp.com.example.bskapp.dataapi.DriverLocationInfo;
 import com.example.bskapp.com.example.bskapp.dataapi.DriverVehicleInfo;
 import com.example.bskapp.com.example.bskapp.dataapi.IMEIRelation;
 import com.example.bskapp.com.example.bskapp.dataapi.Location;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -50,7 +54,6 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         AzureServiceAdapter.Initialize(this);
         mClient = AzureServiceAdapter.getInstance().getClient();
@@ -115,6 +118,28 @@ public class MainActivity extends AppCompatActivity  {
         mFusedLocationClient.requestLocationUpdates(locationRequest,locationCallback,null);
         getIMEIRelation();
 
+    }
+
+    private void getFirebaseToken()
+    {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+
+                        Log.d(TAG, token);
+                        Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
@@ -267,6 +292,8 @@ public class MainActivity extends AppCompatActivity  {
             sw_Login.setChecked(false);
 
         }
+
+        getFirebaseToken();
 
 /*        Switch sw_Trip = (Switch) findViewById(R.id.switchButton_Trip);
         TextView tv_Trip= (TextView)findViewById(R.id.textView_Switch2);
