@@ -1,6 +1,7 @@
 package com.example.bskapp;
 
 import android.content.Intent;
+import android.media.Ringtone;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,7 +56,6 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AzureServiceAdapter.Initialize(this);
         mClient = AzureServiceAdapter.getInstance().getClient();
         mApp = MainApplication.getContext();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -86,7 +86,18 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
+        Ringtone r = mApp.getNotificationRingtone();
+        r.stop();
+        mApp.syncFirebaseToken();
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        //setIntent(intent);//must store the new intent unless getIntent() will return the old one
+        Log.d(TAG, "Notification Clicked!");
+        Ringtone r = mApp.getNotificationRingtone();
+        r.stop();
     }
 
     public void startService() {
@@ -120,27 +131,7 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    private void getFirebaseToken()
-    {
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
 
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-
-                        // Log and toast
-
-                        Log.d(TAG, token);
-                        Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
 
 
     private void getDriverVehicleInfo()
@@ -293,7 +284,7 @@ public class MainActivity extends AppCompatActivity  {
 
         }
 
-        getFirebaseToken();
+
 
 /*        Switch sw_Trip = (Switch) findViewById(R.id.switchButton_Trip);
         TextView tv_Trip= (TextView)findViewById(R.id.textView_Switch2);

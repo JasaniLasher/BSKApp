@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +25,7 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
+    private MainApplication mApp = MainApplication.getContext();
 
     /**
      * Called when message is received.
@@ -72,7 +74,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
-        sendNotification("Notified");
+        sendNewNotification("Notified");
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }
@@ -93,7 +95,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-        sendRegistrationToServer(token);
+        mApp.updateNotificationToken(token);
     }
     // [END on_new_token]
 
@@ -125,6 +127,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
+        Log.d(TAG,"Entered Server Registration");
     }
 
     /**
@@ -132,89 +135,62 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody) {
-        try {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                    PendingIntent.FLAG_ONE_SHOT);
 
-            String channelId = "BSK.Driver.Booking";
-            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-            NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(this, channelId)
-                            .setContentTitle("Booking Received!")
-                            .setContentText(messageBody)
-                            .setSmallIcon(android.R.drawable.ic_notification_overlay)
-                            .setAutoCancel(true)
-                            .setSound(defaultSoundUri)
-                            .setContentIntent(pendingIntent);
+    private void sendNewNotification(String messageBody) {
+        try {
+            Log.d(TAG, "Entered new notification");
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                   // new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            // Since android Oreo notification channel is needed.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel channel = new NotificationChannel(channelId,
-                        "Channel human readable title",
-                        NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(channel);
-            }
-
-            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-        }
-        catch(Exception ex) {
-
-            Log.d(TAG, "Notification exception: " + ex.getMessage());
-        }
-
-    }
-
-    private void sendNewNotification(String messageBody) {
-        try {
-
-            Intent fullScreenIntent = new Intent(this, MainActivity.class);
-            PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
-                    fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                CharSequence name = "BOOKING CHANNEL";
+                CharSequence name = "BOOKINGAUDIO";
                 String description = "Channel for booking notification";
                 int importance = NotificationManager.IMPORTANCE_HIGH;
-                NotificationChannel channel = new NotificationChannel("BOOKING CHANNEL", name, importance);
+                NotificationChannel channel = new NotificationChannel("BOOKINGAUDIO", name, importance);
                 channel.setDescription(description);
                 // Register the channel with the system; you can't change the importance
                 // or other notification behaviors after this
-                AudioAttributes att = new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build();
-                channel.setSound(soundUri, att);
-                NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
                 notificationManager.createNotificationChannel(channel);
             }
 
 
 
             NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(this, "BOOKING CHANNEL")
+                    new NotificationCompat.Builder(this, "BOOKINGAUDIO")
                             .setSmallIcon(android.R.drawable.ic_notification_overlay)
                             .setContentTitle("BOOKED")
-                            .setContentText("Booking ID: 4564378383")
+                            .setContentText("Booking ID: 4564378386")
                             .setPriority(NotificationCompat.PRIORITY_HIGH)
                             .setCategory(NotificationCompat.CATEGORY_CALL)
-                            .setSound(soundUri, AudioManager.STREAM_NOTIFICATION)
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true);
+
+
+                            //.setAutoCancel(true);
 
                             // Use a full-screen intent only for the highest-priority alerts where you
                             // have an associated activity that you would like to launch after the user
                             // interacts with the notification. Also, if your app targets Android 10
                             // or higher, you need to request the USE_FULL_SCREEN_INTENT permission in
                             // order for the platform to invoke this notification.
-                            .setFullScreenIntent(fullScreenPendingIntent, true);
+                            //.setFullScreenIntent(fullScreenPendingIntent, true);
 
-            Notification incomingCallNotification = notificationBuilder.build();
+
+            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+
+
+            Ringtone r = mApp.getNotificationRingtone();
+            r.play();
+
 
         }
         catch(Exception ex) {
