@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity  {
 
         Ringtone r = mApp.getNotificationRingtone();
         r.stop();
-        mApp.syncFirebaseToken();
+        //mApp.syncFirebaseToken();
     }
 
     @Override
@@ -253,8 +253,7 @@ public class MainActivity extends AppCompatActivity  {
         mApp.setDriverGuid(driverGuid);
         //Log.d(TAG, "updateDriverVehicleInfo: " + driverGuid);
         //UpdateDBLocation(driverGuid);
-        if(lastAvailableLocation != null)
-            getLocation(lastAvailableLocation.getLatitude(),lastAvailableLocation.getLongitude());
+
 
 /*        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "First enable LOCATION ACCESS in settings.", Toast.LENGTH_LONG).show();
@@ -282,6 +281,11 @@ public class MainActivity extends AppCompatActivity  {
         else {
             sw_Login.setChecked(false);
 
+        }
+        Log.d(TAG,"Check Location");
+        if(lastAvailableLocation != null) {
+            Log.d(TAG,"Location Available");
+            getLocation(lastAvailableLocation.getLatitude(), lastAvailableLocation.getLongitude());
         }
 
 
@@ -363,9 +367,10 @@ public class MainActivity extends AppCompatActivity  {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                Log.d(TAG,"Location Callback Successful");
                 mFusedLocationClient.removeLocationUpdates(locationCallback);
                 if (locationResult == null) {
-
+                    Log.d(TAG,"Location result is null");
                     return;
                 }
                 for (android.location.Location location : locationResult.getLocations()) {

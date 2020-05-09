@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 27
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "bsk.mobile.driverapp"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -23,6 +23,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.microsoft.azure:azure-mobile-android:3.5.1'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     //implementation 'com.android.support:multidex:1.0.3'
