@@ -1,10 +1,15 @@
 package com.example.bskapp;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.Ringtone;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -17,9 +22,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.bskapp.com.example.bskapp.dataapi.AzureServiceAdapter;
+import com.example.bskapp.com.example.bskapp.dataapi.DriverLocationInfo;
 import com.example.bskapp.com.example.bskapp.dataapi.DriverVehicleInfo;
 import com.example.bskapp.com.example.bskapp.dataapi.IMEIRelation;
 import com.example.bskapp.com.example.bskapp.dataapi.Location;
@@ -37,6 +44,7 @@ import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class MainActivity extends AppCompatActivity  {
@@ -50,12 +58,16 @@ public class MainActivity extends AppCompatActivity  {
     private LocationCallback locationCallback;
     private android.location.Location lastAvailableLocation;
     private String TAG = "MainActivity";
+    private boolean isLoading = false;
+    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        isLoading = true;
+        getImei();
         mClient = AzureServiceAdapter.getInstance().getClient();
         mApp = MainApplication.getContext();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -68,12 +80,28 @@ public class MainActivity extends AppCompatActivity  {
                 if (isChecked) {
                     tv_Login.setText("Logged ON");
                     startService();
+
                 } else {
                     tv_Login.setText("Logged OFF");
                     stopService();
+
                 }
             }
         });
+
+        sw_Log.setOnClickListener(new CompoundButton.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                boolean checked = ((Switch)v).isChecked();
+                if(checked)
+                    UpdateShedInShedOut("Shed In");
+                else
+                    UpdateShedInShedOut("Shed Out");
+
+            }
+
+        });
+
 
         Switch sw_Trip = (Switch) findViewById(R.id.switchButton_Trip);
         sw_Trip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -88,7 +116,8 @@ public class MainActivity extends AppCompatActivity  {
 
         Ringtone r = mApp.getNotificationRingtone();
         r.stop();
-        //mApp.syncFirebaseToken();
+        mApp.syncFirebaseToken();
+        isLoading = false;
     }
 
     @Override
@@ -126,9 +155,10 @@ public class MainActivity extends AppCompatActivity  {
 
     public void trigger(View view)
     {
+        isLoading = true;
         mFusedLocationClient.requestLocationUpdates(locationRequest,locationCallback,null);
         getIMEIRelation();
-
+        isLoading = false;
     }
 
 
@@ -382,6 +412,35 @@ public class MainActivity extends AppCompatActivity  {
         };
     }
 
+    private void UpdateShedInShedOut(final String status)
+    {
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    MobileServiceTable<DriverVehicleInfo> mDriverVehicleInfoTable = mClient.getTable(DriverVehicleInfo.class);
+                    DriverVehicleInfo driverVehicleInfo =   new DriverVehicleInfo();
+                    driverVehicleInfo.setId(UUID.randomUUID().toString());
+                    driverVehicleInfo.setIMEI(mApp.getImei());
+                    driverVehicleInfo.setShedInShedOutStatus(status);
+
+                    mDriverVehicleInfoTable
+                            .insert(driverVehicleInfo)
+                            .get();
+
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    createAndShowDialogFromTask(e, "Error");
+                }
+                return null;
+            }
+        };
+
+        runAsyncTask(task);
+    }
+
 
 
     private void createAndShowDialogFromTask(final Exception exception, String title) {
@@ -416,5 +475,37 @@ public class MainActivity extends AppCompatActivity  {
         } else {
             return task.execute();
         }
+    }
+
+
+
+    public void getImei() {
+        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        String imei="";
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                == PackageManager.PERMISSION_GRANTED) {
+            // READ_PHONE_STATE permission has been granted.
+            if (android.os.Build.VERSION.SDK_INT >= 26) {
+                try {
+                    imei = telephonyManager.getImei();
+                }
+                catch(SecurityException ex) {
+                    createAndShowDialogFromTask(ex, "Error");
+                }
+            }
+            else
+            {
+                try {
+                    imei = telephonyManager.getDeviceId();
+                }
+                catch(SecurityException ex) {
+                    createAndShowDialogFromTask(ex, "Error");
+                }
+            }
+        }
+
+
+        Log.d(TAG,"IMEI :" +imei);
+
     }
 }

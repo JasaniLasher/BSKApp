@@ -60,22 +60,6 @@ public class DriverVehicleInfo
     public String getLastKnownLocation() { return mLastKnownLocation; }
     public final void setLastKnownLocation(String LastKnownLocation) { mLastKnownLocation= LastKnownLocation; }
 
-
-    @com.google.gson.annotations.SerializedName("createdAt")
-    private DateTimeOffset mCreatedAt;
-    public DateTimeOffset getCreatedAt() { return mCreatedAt; }
-    protected void setCreatedAt(DateTimeOffset createdAt) { mCreatedAt = createdAt; }
-
-    @com.google.gson.annotations.SerializedName("updatedAt")
-    private DateTimeOffset mUpdatedAt;
-    public DateTimeOffset getUpdatedAt() { return mUpdatedAt; }
-    protected void setUpdatedAt(DateTimeOffset updatedAt) { mUpdatedAt = updatedAt; }
-
-    @com.google.gson.annotations.SerializedName("version")
-    private String mVersion;
-    public String getVersion() { return mVersion; }
-    public final void setVersion(String version) { mVersion = version; }
-
     public DriverVehicleInfo() { }
 
     @Override

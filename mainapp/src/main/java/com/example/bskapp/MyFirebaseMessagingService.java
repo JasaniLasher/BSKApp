@@ -21,6 +21,10 @@ import androidx.work.WorkManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -54,10 +58,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-
+        String notificationData = "";
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+
+            notificationData = remoteMessage.getData().toString();
+            Log.d(TAG, "Message data payload: " + notificationData);
 
             if (/* Check if data needs to be processed by long running job */ true) {
                 // For long-running tasks (10 seconds or more) use WorkManager.
@@ -74,7 +80,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
-        sendNewNotification("Notified");
+        sendNewNotification(notificationData);
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }
@@ -138,6 +144,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNewNotification(String messageBody) {
         try {
+
+            JSONObject reader = new JSONObject(messageBody);
+            String bookingID = reader.getString("key_1");
+
             Log.d(TAG, "Entered new notification");
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -168,7 +178,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     new NotificationCompat.Builder(this, "BOOKINGAUDIO")
                             .setSmallIcon(android.R.drawable.ic_notification_overlay)
                             .setContentTitle("BOOKED")
-                            .setContentText("Booking ID: 4564378386")
+                            .setContentText("Booking ID: "+bookingID)
                             .setPriority(NotificationCompat.PRIORITY_HIGH)
                             .setCategory(NotificationCompat.CATEGORY_CALL)
                             .setContentIntent(pendingIntent)

@@ -182,7 +182,7 @@ public class LocationUpdaterService extends Service {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
-
+                    Log.d(TAG, "onLocationResult: NULL");
                     return;
                 }
                 for (android.location.Location location : locationResult.getLocations()) {
