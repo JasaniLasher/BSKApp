@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -42,6 +43,10 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -52,6 +57,7 @@ public class MainActivity extends AppCompatActivity  {
     public static final String EXTRA_MESSAGE = "key";
     private MobileServiceClient mClient;
     private String itemId;
+    private android.content.Context curContext;
     private MainApplication mApp;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
@@ -59,6 +65,7 @@ public class MainActivity extends AppCompatActivity  {
     private android.location.Location lastAvailableLocation;
     private String TAG = "MainActivity";
     private boolean isLoading = false;
+    private BigDecimal kms;
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 0;
 
 
@@ -67,6 +74,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         isLoading = true;
+        curContext = this;
         getImei();
         mClient = AzureServiceAdapter.getInstance().getClient();
         mApp = MainApplication.getContext();
@@ -104,14 +112,73 @@ public class MainActivity extends AppCompatActivity  {
 
 
         Switch sw_Trip = (Switch) findViewById(R.id.switchButton_Trip);
-        sw_Trip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    serviceTripOn();
-                } else {
-                    serviceTripOff();
-                }
+
+        sw_Trip.setOnClickListener(new CompoundButton.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                final boolean checked = ((Switch)v).isChecked();
+                AlertDialog.Builder builder = new AlertDialog.Builder(curContext);
+                if(checked)
+                    builder.setTitle("Opening Kms");
+                else
+                    builder.setTitle("Closing Kms");
+                // Set up the input
+                final EditText input = new EditText(curContext);
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                builder.setView(input);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        TextView tv_Trip = (TextView)findViewById(R.id.textView_Switch2);
+
+                        // Create a DecimalFormat that fits your requirements
+                        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+                        //symbols.setGroupingSeparator(',');
+                        symbols.setDecimalSeparator('.');
+                        String pattern = "###0.0#";
+                        DecimalFormat decimalFormat = new DecimalFormat(pattern, symbols);
+                        decimalFormat.setParseBigDecimal(true);
+
+                        // parse the string
+                        BigDecimal bigDecimal = null;
+                        try {
+                            bigDecimal = (BigDecimal) decimalFormat.parse(input.getText().toString());
+                            Log.d(TAG, "kms: " + bigDecimal);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        kms = bigDecimal;
+                        if(checked) {
+                            UpdateTripStatus("Running",kms);
+                            tv_Trip.setText("Trip ON");
+                            serviceTripOn();
+                        }
+                        else{
+                            UpdateTripStatus("Standing",kms);
+                            tv_Trip.setText("Trip OFF");
+                            serviceTripOff();
+                        }
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Switch sw_Trip = (Switch) findViewById(R.id.switchButton_Trip);
+                        if(checked)
+                            sw_Trip.setChecked(false);
+                        else
+                            sw_Trip.setChecked(true);
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
             }
+
         });
 
         Ringtone r = mApp.getNotificationRingtone();
@@ -320,18 +387,20 @@ public class MainActivity extends AppCompatActivity  {
 
 
 
-/*        Switch sw_Trip = (Switch) findViewById(R.id.switchButton_Trip);
+        Switch sw_Trip = (Switch) findViewById(R.id.switchButton_Trip);
         TextView tv_Trip= (TextView)findViewById(R.id.textView_Switch2);
 
         if(pTripStatus.equalsIgnoreCase("Running")) {
             sw_Trip.setChecked(true);
+            serviceTripOn();
             tv_Trip.setText("Trip ON");
         }
         else
         {
             sw_Trip.setChecked(false);
+            serviceTripOff();
             tv_Trip.setText("Trip OFF");
-        }*/
+        }
     }
 
     private void getIMEIRelation()
@@ -426,6 +495,35 @@ public class MainActivity extends AppCompatActivity  {
                     driverVehicleInfo.setIMEI(mApp.getImei());
                     driverVehicleInfo.setShedInShedOutStatus(status);
 
+                    mDriverVehicleInfoTable
+                            .insert(driverVehicleInfo)
+                            .get();
+
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    createAndShowDialogFromTask(e, "Error");
+                }
+                return null;
+            }
+        };
+
+        runAsyncTask(task);
+    }
+
+    private void UpdateTripStatus(final String status,final BigDecimal reading)
+    {
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    MobileServiceTable<DriverVehicleInfo> mDriverVehicleInfoTable = mClient.getTable(DriverVehicleInfo.class);
+                    DriverVehicleInfo driverVehicleInfo =   new DriverVehicleInfo();
+                    driverVehicleInfo.setId(UUID.randomUUID().toString());
+                    driverVehicleInfo.setIMEI(mApp.getImei());
+                    driverVehicleInfo.setTripStatus(status);
+                    driverVehicleInfo.setReading(reading);
                     mDriverVehicleInfoTable
                             .insert(driverVehicleInfo)
                             .get();

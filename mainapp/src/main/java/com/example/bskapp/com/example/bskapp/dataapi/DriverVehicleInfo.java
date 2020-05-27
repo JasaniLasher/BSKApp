@@ -2,6 +2,8 @@ package com.example.bskapp.com.example.bskapp.dataapi;
 
 import com.microsoft.windowsazure.mobileservices.table.DateTimeOffset;
 
+import java.math.BigDecimal;
+
 public class DriverVehicleInfo
 {
     @com.google.gson.annotations.SerializedName("id")
@@ -59,6 +61,11 @@ public class DriverVehicleInfo
     private String mLastKnownLocation;
     public String getLastKnownLocation() { return mLastKnownLocation; }
     public final void setLastKnownLocation(String LastKnownLocation) { mLastKnownLocation= LastKnownLocation; }
+
+    @com.google.gson.annotations.SerializedName("odoReading")
+    private BigDecimal mReading;
+    public BigDecimal getReading() { return mReading; }
+    public final void setReading(BigDecimal Reading) { mReading= Reading; }
 
     public DriverVehicleInfo() { }
 
