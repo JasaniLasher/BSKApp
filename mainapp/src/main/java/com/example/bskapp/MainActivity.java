@@ -494,6 +494,7 @@ public class MainActivity extends AppCompatActivity  {
                     driverVehicleInfo.setId(UUID.randomUUID().toString());
                     driverVehicleInfo.setIMEI(mApp.getImei());
                     driverVehicleInfo.setShedInShedOutStatus(status);
+                    driverVehicleInfo.setReading(new BigDecimal(0));
 
                     mDriverVehicleInfoTable
                             .insert(driverVehicleInfo)

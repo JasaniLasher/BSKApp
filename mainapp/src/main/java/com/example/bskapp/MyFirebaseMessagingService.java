@@ -178,7 +178,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     new NotificationCompat.Builder(this, "BOOKINGAUDIO")
                             .setSmallIcon(android.R.drawable.ic_notification_overlay)
                             .setContentTitle("BOOKED")
-                            .setContentText("Booking ID: "+bookingID)
+                            .setContentText("Booking ID: "+ bookingID)
                             .setPriority(NotificationCompat.PRIORITY_HIGH)
                             .setCategory(NotificationCompat.CATEGORY_CALL)
                             .setContentIntent(pendingIntent)

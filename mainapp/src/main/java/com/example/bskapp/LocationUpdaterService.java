@@ -207,11 +207,16 @@ public class LocationUpdaterService extends Service {
 
                     MobileServiceTable<DriverLocationInfo> mDriverLocationInfoTable = mClient.getTable(DriverLocationInfo.class);
                     DriverLocationInfo driverUpdateInfo =   new DriverLocationInfo();
+                    Log.d(TAG, "driverGuid: "+driverGuid);
                     driverUpdateInfo.setId(driverGuid);
                     driverUpdateInfo.setLastKnownLocation("");
+                    Log.d(TAG, "driverID: "+driverID);
                     driverUpdateInfo.setDriverID(driverID);
+                    Log.d(TAG, "branchID: "+branchID);
                     driverUpdateInfo.setBranchId(branchID);
+                    Log.d(TAG, "companyID: "+companyID);
                     driverUpdateInfo.setCompanyId(companyID);
+                    Log.d(TAG, "Latitude: "+lastAvailableLocation.getLatitude());
                     driverUpdateInfo.setLatitude(lastAvailableLocation.getLatitude());
                     driverUpdateInfo.setLongitude(lastAvailableLocation.getLongitude());
 
@@ -231,6 +236,7 @@ public class LocationUpdaterService extends Service {
                     };
                     mainHandler.post(myRunnable);*/
                 } catch (final Exception e) {
+                    e.printStackTrace();
                     Log.d(TAG, "Location exception: "+e.getMessage());
                 }
                 return null;
